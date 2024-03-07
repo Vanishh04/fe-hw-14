@@ -1,10 +1,8 @@
-const searchBtn = document.getElementById('searchBtn');
-const postIdInput = document.getElementById('postId');
-const postContainer = document.getElementById('postContainer');
+// main.js
+document.getElementById('searchBtn').addEventListener('click', () => {
+  const postId = document.getElementById('postId').value;
 
-searchBtn.addEventListener('click', () => {
-  const postId = parseInt(postIdInput.value);
-  if (isNaN(postId) || postId < 1 || postId > 100) {
+  if (postId < 1 || postId > 100) {
     alert('Будь ласка, введіть коректний ID поста (від 1 до 100).');
     return;
   }
@@ -17,6 +15,7 @@ searchBtn.addEventListener('click', () => {
       return response.json();
     })
     .then(post => {
+      const postContainer = document.getElementById('postContainer');
       postContainer.innerHTML = `
         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
@@ -36,10 +35,7 @@ searchBtn.addEventListener('click', () => {
         <div id="commentsContainer" class="mt-4"></div>
       `;
 
-      const commentsBtn = document.getElementById('commentsBtn');
-      const commentsContainer = document.getElementById('commentsContainer');
-
-      commentsBtn.addEventListener('click', () => {
+      document.getElementById('commentsBtn').addEventListener('click', () => {
         fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
           .then(response => {
             if (!response.ok) {
@@ -48,6 +44,7 @@ searchBtn.addEventListener('click', () => {
             return response.json();
           })
           .then(comments => {
+            const commentsContainer = document.getElementById('commentsContainer');
             let commentsHTML = '<h3 class="text-lg font-medium leading-6 text-gray-900">Коментарі</h3>';
             comments.forEach(comment => {
               commentsHTML += `
@@ -63,11 +60,11 @@ searchBtn.addEventListener('click', () => {
             commentsContainer.innerHTML = commentsHTML;
           })
           .catch(error => {
-            commentsContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+            alert(error.message);
           });
       });
     })
     .catch(error => {
-      postContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+      alert(error.message);
     });
 });
